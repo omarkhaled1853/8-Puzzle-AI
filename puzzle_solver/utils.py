@@ -16,6 +16,7 @@ def manhattan_distance(board: List[int]) -> int:
 
     return cost
 
+
 def euclidean_distance(board: List[int]) -> float:
     """
     Calculates the Euclidean distance for a given board.
