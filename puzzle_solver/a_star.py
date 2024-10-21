@@ -4,7 +4,7 @@ from .state import State
 
 
 class A_Star:
-    def __init__(self, board: List[int], heuristic) -> None:
+    def __init__(self, board: int, heuristic) -> None:
         self.board = board
         self.heuristic = heuristic
         self.dirs = [
@@ -15,10 +15,11 @@ class A_Star:
         ]
 
     def is_solved(self, state: State) -> bool:
-        return state.board == [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        return state.board == 12345678
 
     def solve(self):
-        initial_state = State(board=self.board)
+        empty_tile = self.get_empty_tile(self.board)
+        initial_state = State(board=self.board, empty_tile=empty_tile)
         visited = set()
         # g(n) is number of moves. h(n) heuristic estimate
         frontier = []  # Heap (g(n) + h(n), g(n), state).
@@ -35,13 +36,15 @@ class A_Star:
 
             visited.add(state)
 
-            empty_tile = self.get_empty_tile(state.board)
+            empty_tile = state.empty_tile
             for dir in self.dirs:
                 if self.is_valid_tile(empty_tile, empty_tile + dir):
                     new_empty_tile = empty_tile + dir
-                    new_board = state.board.copy()
-                    new_board[empty_tile], new_board[new_empty_tile] = new_board[new_empty_tile], new_board[empty_tile]
-                    new_state = State(new_board, state)
+                    new_board = self.change_two_tiles(
+                        state.board, empty_tile, new_empty_tile)
+
+                    new_state = State(
+                        board=new_board, empty_tile=new_empty_tile, parent=state)
 
                     if new_state not in visited:
                         h_n = self.heuristic(new_board)
@@ -53,12 +56,22 @@ class A_Star:
 
         return None
 
-    def is_valid_tile(self, before, after):
+    def is_valid_tile(self, before: int, after: int) -> bool:
         if after < 0 or after >= 9:
             return False
         if abs(before - after) == 1 and (before // 3) != (after // 3):
             return False
         return True
 
-    def get_empty_tile(self, board: List[int]) -> int:
-        return board.index(0)
+    def get_empty_tile(self, board: int) -> int:
+        pos = 8
+        while board % 10 != 0:
+            board //= 10
+            pos -= 1
+        return pos
+
+    def change_two_tiles(self, board: int, first: int, second: int) -> int:
+        value = (board // (10 ** (8 - second))) % 10
+        board -= value * 10 ** (8 - second)
+        board += value * 10 ** (8 - first)
+        return board
