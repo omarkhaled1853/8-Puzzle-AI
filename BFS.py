@@ -1,4 +1,5 @@
 import copy
+from queue import Queue
 from node import Node
 
 
@@ -48,16 +49,19 @@ class BFS:
         root = Node(None, self.__intial_state, intial_empty_tile_location)
         
         # frontier queue to keep track with the interesting nodes
-        frontier = [root]
-        # expanded set to keep track with the visited and progressed nodes
-        expanded = []
+        frontier = Queue()
+        frontier.put(root)
+        # visited set to keep track with the visited nodes (can be not processed)
+        visited = {root}
+        # expanded set to keep track with the visited and processed nodes
+        expanded = set()
 
         # loop until frontier queue becomes empty
         while frontier:
             # get the current interesting node
-            node = frontier.pop(0)
+            node = frontier.get()
             # add the interesting node in expanded set
-            expanded.append(node)
+            expanded.add(node)
 
             node_board = node.get_board()
             
@@ -82,6 +86,7 @@ class BFS:
                     )
                     new_node = Node(node, new_board, new_empty)
 
-                    # check if the new searched board is exist in frontier queue or expanede set before
-                    if not any(n.get_board() == new_board for n in frontier + expanded):
-                        frontier.append(new_node)
+                    # check if the new searched board is exist in visited set before
+                    if new_node not in visited:
+                        visited.add(new_node)
+                        frontier.put(new_node)

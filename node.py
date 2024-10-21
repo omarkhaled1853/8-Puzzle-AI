@@ -8,6 +8,15 @@ class Node:
         # tuble of the empty tile location
         self.__empty_tile_location = empty_tile_location
     
+    # hash board value
+    def __hash__(self):
+        return hash(tuple(map(tuple, self.__board)))
+    
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return self.__board == other.__board
+        return False
+
     def get_parent(self):
         return self.__parent
 

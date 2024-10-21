@@ -1,3 +1,4 @@
+import queue
 from bfs import BFS
 
 def print_path(path):
@@ -44,12 +45,13 @@ def main():
 
 
     print_path(path)
-    print("="*100)
+    # print("="*100)
 
-    print_expanded_nodes(expanded)
-    print("="*100)
+    # print_expanded_nodes(expanded)
+    # print("="*100)
 
-    print_forntier_nodes(frontier)
+    # print_forntier_nodes(frontier)
 
+    
 
 main()
