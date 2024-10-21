@@ -59,7 +59,7 @@ class BFS:
         # loop until frontier queue becomes empty
         while frontier:
             # get the current interesting node
-            node = frontier.get()
+            node: Node = frontier.get()
             # add the interesting node in expanded set
             expanded.add(node)
 
