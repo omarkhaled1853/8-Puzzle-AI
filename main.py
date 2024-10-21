@@ -41,13 +41,14 @@ def main():
     bfs = BFS(board)
 
     # perform BFS algorithm
-    path, expanded, visited = bfs.solve()
+    movements, cost, number_of_visited_nodes, max_depth_search, path = bfs.solve()
 
-    print(len(visited))
+    print(movements, cost, number_of_visited_nodes, max_depth_search)
     print_path(path)
     # print("="*100)
 
     # print_expanded_nodes(expanded)
     # print("="*100)
 
-main()
+if __name__ == '__main__':
+    main()
