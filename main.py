@@ -29,8 +29,11 @@ def print_output(output):
 
 
 def main():
-    # board = [1, 2, 5, 3, 4, 0, 6, 7, 8]
-    board = [1, 3, 0, 6, 7, 2, 5, 4, 8]
+    print("8 Puzzle Solver")
+    print("=" * 30)
+
+    board = [1, 2, 5, 3, 4, 0, 6, 7, 8]
+    # board = [1, 3, 0, 6, 7, 2, 5, 4, 8]
     # board = [5, 3, 1, 4, 2, 8, 7, 6, 0]
     # board = [0, 4, 2, 5, 3, 7, 1, 8, 6]
     # board = [3, 1, 2, 6, 4, 5, 7, 8, 0]
@@ -38,8 +41,12 @@ def main():
     solver = A_Star(new_board, manhattan_distance)
     res = solver.solve()
 
-    print_output(res)
-    print("MOVES:", len(res) - 1)
+    print_output(res['goal_steps'])
+    print('Path To Goal:', res['path_to_goal'])
+    print('Cost Of Path:', res['cost_of_path'])
+    print('Nodes Expanded:', res['nodes_expanded'])
+    print('Search Depth:', res['search_depth'])
+    print('Moves:', len(res['goal_steps']) - 1)
 
 
 if __name__ == '__main__':

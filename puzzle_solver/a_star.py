@@ -8,10 +8,10 @@ class A_Star:
         self.board = board
         self.heuristic = heuristic
         self.dirs = [
-            -1,  # Left
-            1,  # Right
-            -3,  # Up
-            3   # Down
+            (-1, 'LEFT'),  # Left
+            (1, 'RIGHT'),  # Right
+            (-3, 'UP'),    # Up
+            (3, 'DOWN')    # Down
         ]
 
     def is_solved(self, state: State) -> bool:
@@ -23,6 +23,7 @@ class A_Star:
         visited = set()
         # g(n) is number of moves. h(n) heuristic estimate
         frontier = []  # Heap (g(n) + h(n), g(n), state).
+        max_depth = 0
 
         # heapq.heappush(frontier, (0, 0, initial_state))
         heapq.heappush(frontier, initial_state)
@@ -30,21 +31,23 @@ class A_Star:
         while frontier:
             # f_n, g_n, state = heapq.heappop(frontier)
             state = heapq.heappop(frontier)
+            max_depth = max(max_depth, state.g_n)
 
             if self.is_solved(state):
+                break
                 return state.get_path()
 
             visited.add(state)
 
             empty_tile = state.empty_tile
-            for dir in self.dirs:
+            for dir, move in self.dirs:
                 if self.is_valid_tile(empty_tile, empty_tile + dir):
                     new_empty_tile = empty_tile + dir
                     new_board = self.change_two_tiles(
                         state.board, empty_tile, new_empty_tile)
 
                     new_state = State(
-                        board=new_board, empty_tile=new_empty_tile, parent=state)
+                        board=new_board, empty_tile=new_empty_tile, parent=state, move=move)
 
                     if new_state not in visited:
                         h_n = self.heuristic(new_board)
@@ -54,7 +57,13 @@ class A_Star:
                         # heapq.heappush(frontier, (cost, g_n + 1, new_state))
                         heapq.heappush(frontier, new_state)
 
-        return None
+        return {
+            'path_to_goal': state.get_moves()[1:],
+            'cost_of_path': state.g_n + state.h_n,
+            'nodes_expanded': len(visited),
+            'search_depth': max_depth,
+            'goal_steps': state.get_path()
+        }
 
     def is_valid_tile(self, before: int, after: int) -> bool:
         if after < 0 or after >= 9:
