@@ -1,5 +1,6 @@
 from puzzle_solver.a_star import *
 from puzzle_solver.utils import *
+import time
 
 
 def convert_board_to_int(board):
@@ -29,7 +30,7 @@ def print_output(output):
 
 
 def main():
-    print("8 Puzzle Solver")
+    print("8 Puzzle Solver: Using A* Algorithm")
     print("=" * 30)
 
     board = [1, 2, 5, 3, 4, 0, 6, 7, 8]
@@ -39,7 +40,10 @@ def main():
     # board = [3, 1, 2, 6, 4, 5, 7, 8, 0]
     new_board = convert_board_to_int(board)
     solver = A_Star(new_board, manhattan_distance)
+
+    begin = time.time()
     res = solver.solve()
+    end = time.time()
 
     print_output(res['goal_steps'])
     print('Path To Goal:', res['path_to_goal'])
@@ -47,6 +51,7 @@ def main():
     print('Nodes Expanded:', res['nodes_expanded'])
     print('Search Depth:', res['search_depth'])
     print('Moves:', len(res['goal_steps']) - 1)
+    print('Time Taken:', (end - begin) * 1000, 'ms')
 
 
 if __name__ == '__main__':

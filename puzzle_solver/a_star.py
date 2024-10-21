@@ -20,7 +20,7 @@ class A_Star:
     def solve(self):
         empty_tile = self.get_empty_tile(self.board)
         initial_state = State(board=self.board, empty_tile=empty_tile)
-        visited = set()
+        visited, expanded = set(), set([initial_state])
         # g(n) is number of moves. h(n) heuristic estimate
         frontier = []  # Heap (g(n) + h(n), g(n), state).
         max_depth = 0
@@ -56,11 +56,12 @@ class A_Star:
                         new_state.h_n = h_n
                         # heapq.heappush(frontier, (cost, g_n + 1, new_state))
                         heapq.heappush(frontier, new_state)
+                        expanded.add(new_state)
 
         return {
             'path_to_goal': state.get_moves()[1:],
             'cost_of_path': state.g_n + state.h_n,
-            'nodes_expanded': len(visited),
+            'nodes_expanded': len(expanded),
             'search_depth': max_depth,
             'goal_steps': state.get_path()
         }
