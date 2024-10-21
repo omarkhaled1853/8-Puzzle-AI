@@ -2,13 +2,14 @@ from typing import List
 
 
 class State:
-    def __init__(self, board: List[int], parent=None, g_n: int = 0, h_n: int = 0) -> None:
-        self.board = board
-        self.parent = parent
-        self.g_n = g_n
-        self.h_n = h_n
+    def __init__(self, board: int, empty_tile: int, parent=None, g_n: int = 0, h_n: float = 0) -> None:
+        self.board: int = board
+        self.parent: State = parent
+        self.empty_tile: int = empty_tile
+        self.g_n: int = g_n
+        self.h_n: float = h_n
 
-    def get_path(self):
+    def get_path(self) -> List[int]:
         path = []
         cur_state: State = self
 
@@ -19,7 +20,7 @@ class State:
         return path[::-1]
 
     def __hash__(self) -> int:
-        return hash(str(self.board))
+        return hash(self.board)
 
     def __eq__(self, other) -> bool:
         return self.board == other.board
