@@ -1,4 +1,4 @@
-import queue
+import sys
 from bfs import BFS
 
 def print_path(path):
@@ -41,17 +41,13 @@ def main():
     bfs = BFS(board)
 
     # perform BFS algorithm
-    path, expanded = bfs.solve()
+    path, expanded, visited = bfs.solve()
 
-
+    print(len(visited))
     print_path(path)
     # print("="*100)
 
     # print_expanded_nodes(expanded)
     # print("="*100)
-
-    # print_forntier_nodes(frontier)
-
-    
 
 main()

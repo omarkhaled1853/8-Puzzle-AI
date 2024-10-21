@@ -69,7 +69,7 @@ class BFS:
             if self.__is_solved(node_board):
                 path = []
                 self.__get_path(node, path)
-                return path, expanded
+                return path, expanded, visited
             
             # searching up, down, right, and left for the next movment of the empty tile
             for dir in self.__dirs:
