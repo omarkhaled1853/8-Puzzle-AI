@@ -41,7 +41,7 @@ def main():
     bfs = BFS(board)
 
     # perform BFS algorithm
-    path, frontier, expanded = bfs.solve()
+    path, expanded = bfs.solve()
 
 
     print_path(path)
