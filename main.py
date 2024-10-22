@@ -41,9 +41,9 @@ def main():
     bfs = BFS(board)
 
     # perform BFS algorithm
-    movements, cost, number_of_visited_nodes, max_depth_search, path = bfs.solve()
+    movements, cost, number_of_expanded_nodes, max_depth_search, path = bfs.solve()
 
-    print(movements, cost, number_of_visited_nodes, max_depth_search)
+    print(movements, cost, number_of_expanded_nodes, max_depth_search)
     print_path(path)
     # print("="*100)
 

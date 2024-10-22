@@ -1,5 +1,4 @@
 import copy
-import math
 from queue import Queue
 from node import Node
 
@@ -85,8 +84,8 @@ class BFS:
             if self.__is_solved(node_board):
                 path, movements = self.__get_path_and_movments(node)
                 cost = len(path) - 1
-                number_of_visited_nodes = len(visited)
-                return movements, cost, number_of_visited_nodes, max_depth_search, path
+                number_of_expanded_nodes = len(expanded)
+                return movements, cost, number_of_expanded_nodes, max_depth_search, path
             
             # searching up, down, right, and left for the next movment of the empty tile
             for dir in self.__dirs:
