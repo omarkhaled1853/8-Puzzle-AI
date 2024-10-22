@@ -1,5 +1,5 @@
-import sys
 from bfs import BFS
+import time
 
 def print_path(path):
     # printing path for reaching the goal
@@ -41,14 +41,18 @@ def main():
     bfs = BFS(board)
 
     # perform BFS algorithm
-    movements, cost, number_of_expanded_nodes, max_depth_search, path = bfs.solve()
+    start = time.time()
+    output = bfs.solve()
+    end = time.time()
 
-    print(movements, cost, number_of_expanded_nodes, max_depth_search)
-    print_path(path)
-    # print("="*100)
+    # print(type(output))
 
-    # print_expanded_nodes(expanded)
-    # print("="*100)
+    print(f'time: {(end - start) * 1000} ms')
+    print('path_to_goal:',output['path_to_goal'])
+    print('cost_of_path:',output['cost_of_path'])
+    print('nodes_expanded:',output['nodes_expanded'])
+    print('search_depth:',output['search_depth'])
+    print_path(output['goal_steps'])
 
 if __name__ == '__main__':
     main()

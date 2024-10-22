@@ -40,15 +40,21 @@ class BFS:
 
 
     # get path from root to the goal
-    def __get_path_and_movments(self, root: Node):
+    def __get_path(self, root: Node):
         path = []
-        movements = []
         while root:
             path.append(root.get_board())
+            root = root.get_parent()
+        return path[::-1]
+    
+    # get movements from root to goal 
+    def __get_movements(self, root: Node):
+        movements = []
+        while root:
             movements.append(root.get_movement())
             root = root.get_parent()
         movements.pop()
-        return path[::-1], movements[::-1]
+        return movements[::-1]
         
 
     # bfs algorithm that take the intial puzzle, intial localtion of the empty tile
@@ -82,10 +88,15 @@ class BFS:
             
             # check reaching the goal 
             if self.__is_solved(node_board):
-                path, movements = self.__get_path_and_movments(node)
-                cost = len(path) - 1
-                number_of_expanded_nodes = len(expanded)
-                return movements, cost, number_of_expanded_nodes, max_depth_search, path
+                path = self.__get_path(node)
+                # return dictionary of needed values
+                return {
+                    'path_to_goal': self.__get_movements(node),
+                    'cost_of_path': len(path) - 1,
+                    'nodes_expanded': len(expanded),
+                    'search_depth': max_depth_search,
+                    'goal_steps': path
+                }
             
             # searching up, down, right, and left for the next movment of the empty tile
             for dir in self.__dirs:
