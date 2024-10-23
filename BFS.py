@@ -1,35 +1,53 @@
-import copy
 from queue import Queue
 from node import Node
 
-
 class BFS:
     # list of the possible movement directions
-    #           up   down   right   left 
+                # up    down    right   left
     __dirs = [(-1, 0), (1, 0), (0, 1), (0, -1)]
 
-    def __init__(self, intial_state: list[int]) -> None:
+    def __init__(self, intial_state: int) -> None:
         self.__intial_state = intial_state
     
     # get empty tile location
-    def __get_empty_tile_location(self) -> tuple:
-        for i in range(3):
-            for j in range(3):
-                if(self.__intial_state[i][j] == 0):
-                    return (i, j)
-                
-    # function check boundary condition of puzzle board
-    def __is_safe(self, x, y):
-        return x >= 0 and x < 3 and y >= 0 and y < 3
+    def __get_empty_tile_location(self, board) -> int:
+        idx = 8
+        while board % 10:
+            board //= 10
+            idx -= 1
+        return idx
+        
+    # mapping 1D location of empty tile into 2D location (row, column)
+    def __convert_to_row_column(self, location: int) -> tuple[int]:
+        return location // 3, location % 3
     
+    # mapping 2D location of empty tile into 1D location (index)
+    def __convert_to_index(self, location: tuple[int], dir) -> int:
+        return (location[0] + dir[0]) * 3 + (location[1] + dir[1])
+    
+    # function check boundary condition of puzzle board
+    def __is_safe(self, location: tuple[int], dir) -> bool:
+        return location[0] + dir[0] >= 0 and location[0] + dir[0] < 3 and location[1] + dir[1] >= 0 and location[1] + dir[1] < 3
+
     # function check reaching goal
     def __is_solved(self, board):
-        return board == [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8]
-        ]
+        return board == 12345678
     
+    # get value of location in board
+    def __get_value(self, board, location):
+        # print(location)
+        location = 8 - location
+        while location:
+            board //= 10
+            location -= 1
+        return board % 10
+
+    # get new board
+    def __get_new_board(self, board, old_location, new_location):
+        value = self.__get_value(board, new_location)
+        # print(value)
+        return board - (value * 10 ** (8 - new_location)) + (value * 10 ** (8 - old_location))
+
     # get movment of empty tile
     def __get_movement(self, dir):
         idx = self.__dirs.index(dir)
@@ -62,7 +80,7 @@ class BFS:
     # then return the path, frontier queue (if any) and expanded set
     def solve(self):
         # get empty tile location in the intial state
-        intial_empty_tile_location = self.__get_empty_tile_location()
+        intial_empty_tile_location = self.__get_empty_tile_location(self.__intial_state)
 
         # create a root node with its intial value of the puzzle and empty tile location 
         root = Node(self.__intial_state, intial_empty_tile_location)
@@ -85,7 +103,7 @@ class BFS:
             expanded.add(node)
 
             node_board = node.get_board()
-            
+
             # check reaching the goal 
             if self.__is_solved(node_board):
                 path = self.__get_path(node)
@@ -101,20 +119,23 @@ class BFS:
             # searching up, down, right, and left for the next movment of the empty tile
             for dir in self.__dirs:
                 old_empty = node.get_empty_tile_location()
-                new_empty = (old_empty[0] + dir[0], old_empty[1] + dir[1])
+                # convert from 1D to 2D
+                old_empty_row_column = self.__convert_to_row_column(old_empty)
 
                 # check if not out of bound of the puzzle board
-                if(self.__is_safe(new_empty[0], new_empty[1])):
-                    new_board = copy.deepcopy(node_board)
+                if(self.__is_safe(old_empty_row_column, dir)):
+                    # get new emptiy tile location
+                    new_empty = self.__convert_to_index(old_empty_row_column, dir)
 
-                    new_board[old_empty[0]][old_empty[1]], new_board[new_empty[0]][new_empty[1]] = (
-                        new_board[new_empty[0]][new_empty[1]],
-                        0,
-                    )
+                    # get new board with new empty tile location
+                    new_board = self.__get_new_board(node_board, old_empty, new_empty)
+
                     # get movement of the empty tile
                     movement = self.__get_movement(dir)
 
+                    # create new node
                     new_node = Node(new_board, new_empty, node, movement)
+                    
                     # update max depth search
                     max_depth_search = max(max_depth_search, new_node.get_depth())
 
