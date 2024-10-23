@@ -87,6 +87,7 @@ class DfsPuzzle:
         result_information = {'path_to_goal': path_to_goal,
                               'cost_of_path': len(path_to_goal),
                               'nodes_expanded': len(self.explored),
+                              'search_depth': self.max_depth,
                               'running_time': self.elapsed_time,
                               'goal_steps': goal_steps
                               }
@@ -183,6 +184,7 @@ res2 = dfsMethod.solve(initialState=125340678)
 print(res1['path_to_goal'])
 print(res1['cost_of_path'])
 print(res1['nodes_expanded'])
+print(res1['search_depth'])
 print(res1['running_time'])
 print(res1['goal_steps'''])
 
@@ -191,5 +193,6 @@ print()
 print(res2['path_to_goal'])
 print(res2['cost_of_path'])
 print(res2['nodes_expanded'])
+print(res2['search_depth'])
 print(res2['running_time'])
 print(res2['goal_steps'''])
