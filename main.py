@@ -1,11 +1,12 @@
-from bfs import BFS
+from BFS.bfs import *
+from factory import *
 import time
 
 def main():
     # example
-    board = 125340678
+    board = 12534678
 
-    bfs = BFS(board)
+    bfs = Factory.get_technique('BFS', board)
 
     # perform BFS algorithm
     start = time.time()

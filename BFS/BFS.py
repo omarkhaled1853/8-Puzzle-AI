@@ -1,13 +1,11 @@
 from queue import Queue
-from node import Node
+from BFS.node import *
+from search import *
 
-class BFS:
+class BFS(Search):
     # list of the possible movement directions
                 # up    down    right   left
     __dirs = [(-1, 0), (1, 0), (0, 1), (0, -1)]
-
-    def __init__(self, intial_state: int) -> None:
-        self.__intial_state = intial_state
     
     # get empty tile location
     def __get_empty_tile_location(self, board) -> int:
@@ -78,12 +76,12 @@ class BFS:
     # bfs algorithm that take the intial puzzle, intial localtion of the empty tile
     # and the goal that interest to reach 
     # then return the path, frontier queue (if any) and expanded set
-    def solve(self):
+    def solve(self) -> dict:
         # get empty tile location in the intial state
-        intial_empty_tile_location = self.__get_empty_tile_location(self.__intial_state)
+        intial_empty_tile_location = self.__get_empty_tile_location(self._intial_state)
 
         # create a root node with its intial value of the puzzle and empty tile location 
-        root = Node(self.__intial_state, intial_empty_tile_location)
+        root = Node(self._intial_state, intial_empty_tile_location)
         
         # frontier queue to keep track with the interesting nodes and movment of empty tile
         frontier = Queue()
