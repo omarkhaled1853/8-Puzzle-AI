@@ -1,3 +1,4 @@
+# factory class to returun specific search alogrithm
 class Factory:
     def get_technique(algorithm_name: str, intial_state: int, limit = None, heuristic = None):
         if algorithm_name == 'BFS':
