@@ -1,14 +1,15 @@
-import time
 
-
-class DfsPuzzle:
+class DFS:
     parent = []
     frontier = []
     explored = set()
     depth = []
     max_depth = 0
-    elapsed_time = 0
     goal = 12345678
+
+    def __init__(self, intial_state, limit = None) -> None:
+        self.__intial_state = intial_state
+        self.__limit = limit
 
     def validState(self, emptyPos, newPos):
         if newPos < 0 or newPos >= 9:
@@ -88,14 +89,12 @@ class DfsPuzzle:
                               'cost_of_path': len(path_to_goal),
                               'nodes_expanded': len(self.explored),
                               'search_depth': self.max_depth,
-                              'running_time': self.elapsed_time,
                               'goal_steps': goal_steps
                               }
         return result_information
 
-
-class IterativeDeepSearch(DfsPuzzle):
-    def dfs(self, limit):
+    def dfs(self, limit=float('inf')):
+        """Performs DFS with an optional depth limit."""
         while len(self.frontier) != 0:
 
             state = self.frontier.pop()
@@ -105,94 +104,53 @@ class IterativeDeepSearch(DfsPuzzle):
             if state == self.goal:
                 return True
 
-            if self.depth[state] == limit:
+            # Skip deeper exploration if the limit is reached.
+            if self.depth[state] >= limit:
                 continue
 
             neighbors = self.getNeighbors(str(state))
 
             for neighbor in neighbors:
-                if (neighbor not in self.explored) and (neighbor not in self.frontier):
+                if neighbor not in self.explored and neighbor not in self.frontier:
                     self.frontier.append(neighbor)
                     self.parent[neighbor] = state
                     self.depth[neighbor] = self.depth[state] + 1
 
         return False
 
-    def solve(self, initialState, limit):
-        for i in range(limit + 1):
-            self.parent = {initialState: -1}
-            self.frontier = [initialState]
-            self.explored = set()
-            self.max_depth = 0
-            self.depth = {initialState: 0}
-
-            time_start = time.time()
-            findSolution = self.dfs(i)
-            time_end = time.time()
-
-            self.elapsed_time = time_end - time_start
-
-            if findSolution:
-                return self.getResultInformation()
-
-
-class Dfs(DfsPuzzle):
-    # Iterative dfs function
-    def dfs(self):
-        while len(self.frontier) != 0:
-
-            state = self.frontier.pop()
-            self.explored.add(state)
-            self.max_depth = max(self.max_depth, self.depth[state])
-
-            if state == self.goal:
-                return True
-
-            neighbors = self.getNeighbors(str(state))
-
-            for neighbor in neighbors:
-                if (neighbor not in self.explored) and (neighbor not in self.frontier):
-                    self.frontier.append(neighbor)
-                    self.parent[neighbor] = state
-                    self.depth[neighbor] = self.depth[state] + 1
-
-        return False
-
-    def solve(self, initialState):
-        self.parent = {initialState: -1}
-        self.frontier = [initialState]
+    def solve(self):
+        """Solves using DFS if no limit, otherwise IDFS."""
+        # Set search parameters.
+        self.parent = {self.__intial_state: -1}
+        self.frontier = [self.__intial_state]
         self.explored = set()
         self.max_depth = 0
-        self.depth = {initialState: 0}
+        self.depth = {self.__intial_state: 0}
 
-        time_start = time.time()
-        findSolution = self.dfs()
-        time_end = time.time()
+        # If a limit is provided, run IDFS by gradually increasing the depth.
+        if self.__limit is not None:
+            for i in range(self.__limit + 1):
+                self.reset_state()
+                if self.dfs(i):
+                    return self.getResultInformation()
+        else:  # Otherwise, just perform regular DFS.
+            if self.dfs():
+                return self.getResultInformation()
 
-        self.elapsed_time = time_end - time_start
+    def reset_state(self):
+        """Resets the search state for each new depth limit in IDFS."""
+        self.parent = {self.__intial_state: -1}
+        self.frontier = [self.__intial_state]
+        self.explored = set()
+        self.max_depth = 0
+        self.depth = {self.__intial_state: 0}
 
-        if findSolution:
-            return self.getResultInformation()
 
-
-dfsMethodIterative = IterativeDeepSearch()
-res1 = dfsMethodIterative.solve(initialState=125340678, limit=3)
-
-dfsMethod = Dfs()
-res2 = dfsMethod.solve(initialState=125340678)
+dfs = DFS(125340678)
+res1 = dfs.solve()
 
 print(res1['path_to_goal'])
 print(res1['cost_of_path'])
 print(res1['nodes_expanded'])
 print(res1['search_depth'])
-print(res1['running_time'])
-print(res1['goal_steps'''])
-
-print()
-
-print(res2['path_to_goal'])
-print(res2['cost_of_path'])
-print(res2['nodes_expanded'])
-print(res2['search_depth'])
-print(res2['running_time'])
-print(res2['goal_steps'''])
+print(res1['goal_steps'])
