@@ -1,5 +1,7 @@
+from search import *
 
-class DFS:
+
+class DFS(Search):
     parent = []
     frontier = []
     explored = set()
@@ -7,8 +9,8 @@ class DFS:
     max_depth = 0
     goal = 12345678
 
-    def __init__(self, intial_state, limit = None) -> None:
-        self.__intial_state = intial_state
+    def __init__(self, intial_state, limit) -> None:
+        super().__init__(intial_state)
         self.__limit = limit
 
     def validState(self, emptyPos, newPos):
@@ -121,11 +123,11 @@ class DFS:
     def solve(self):
         """Solves using DFS if no limit, otherwise IDFS."""
         # Set search parameters.
-        self.parent = {self.__intial_state: -1}
-        self.frontier = [self.__intial_state]
+        self.parent = {self._intial_state: -1}
+        self.frontier = [self._intial_state]
         self.explored = set()
         self.max_depth = 0
-        self.depth = {self.__intial_state: 0}
+        self.depth = {self._intial_state: 0}
 
         # If a limit is provided, run IDFS by gradually increasing the depth.
         if self.__limit is not None:
@@ -139,18 +141,8 @@ class DFS:
 
     def reset_state(self):
         """Resets the search state for each new depth limit in IDFS."""
-        self.parent = {self.__intial_state: -1}
-        self.frontier = [self.__intial_state]
+        self.parent = {self._intial_state: -1}
+        self.frontier = [self._intial_state]
         self.explored = set()
         self.max_depth = 0
-        self.depth = {self.__intial_state: 0}
-
-
-dfs = DFS(125340678)
-res1 = dfs.solve()
-
-print(res1['path_to_goal'])
-print(res1['cost_of_path'])
-print(res1['nodes_expanded'])
-print(res1['search_depth'])
-print(res1['goal_steps'])
+        self.depth = {self._intial_state: 0}
