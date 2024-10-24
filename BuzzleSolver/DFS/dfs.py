@@ -1,5 +1,4 @@
-from search import *
-
+from BuzzleSolver.search import *
 
 class DFS(Search):
     parent = []

@@ -1,6 +1,6 @@
 from queue import Queue
-from BFS.node import *
-from search import *
+from BuzzleSolver.BFS.node import *
+from BuzzleSolver.search import *
 
 class BFS(Search):
     # list of the possible movement directions

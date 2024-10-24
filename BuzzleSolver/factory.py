@@ -1,6 +1,6 @@
-from search import *
-from BFS.bfs import *
-from DFS.dfs import *
+from BuzzleSolver.search import *
+from BuzzleSolver.BFS.bfs import *
+from BuzzleSolver.DFS.dfs import *
 
 # factory class to returun specific search alogrithm
 class Factory:
