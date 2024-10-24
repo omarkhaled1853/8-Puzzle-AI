@@ -9,7 +9,7 @@ class DFS(Search):
     max_depth = 0
     goal = 12345678
 
-    def __init__(self, intial_state, limit) -> None:
+    def __init__(self, intial_state: int, limit: int = None) -> None:
         super().__init__(intial_state)
         self.__limit = limit
 
