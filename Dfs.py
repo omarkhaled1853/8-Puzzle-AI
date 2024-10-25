@@ -178,15 +178,16 @@ class Dfs(DfsPuzzle):
 dfsMethodIterative = IterativeDeepSearch()
 res1 = dfsMethodIterative.solve(initialState=125340678, limit=3)
 
-dfsMethod = Dfs()
-res2 = dfsMethod.solve(initialState=125340678)
-
 print(res1['path_to_goal'])
 print(res1['cost_of_path'])
 print(res1['nodes_expanded'])
 print(res1['search_depth'])
 print(res1['running_time'])
 print(res1['goal_steps'''])
+
+
+dfsMethod = Dfs()
+res2 = dfsMethod.solve(initialState=125340678)
 
 print()
 
