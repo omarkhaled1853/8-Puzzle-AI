@@ -46,8 +46,3 @@ class Heuristics:
 
         return distance
 
-
-# heu = Heuristics()
-#
-# print(heu.Manhattan_Distance(board=724506831))
-# print(heu.Euclidean_Distance(board=724506831))
