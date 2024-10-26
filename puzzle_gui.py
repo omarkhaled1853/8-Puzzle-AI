@@ -95,6 +95,7 @@ class Puzzle:
         # Set default value
         self.algorithm_combo.current(0)  
         self.algorithm_combo.pack(fill='x', padx=10, pady=5)
+        self.algorithm_combo.bind("<<ComboboxSelected>>", self.get_selected_algo)
 
         # Set ttk theme to match the dark background
         style = ttk.Style()
@@ -122,6 +123,10 @@ class Puzzle:
         # Configure the Text widget to use the scrollbar
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
+    # get selected algorithm from combobox
+    def get_selected_algo(self, event):
+        selected_value = self.algorithm_combo.get()
+        print(f"Selected Algorithm: {selected_value}") 
     
     # randomize board with update
     def randomize_board(self):
