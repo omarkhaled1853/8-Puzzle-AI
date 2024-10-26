@@ -97,7 +97,33 @@ class Puzzle:
         # Set default value
         self.algorithm_combo.current(0)  
         self.algorithm_combo.pack(fill='x', padx=10, pady=5)
-        self.algorithm_combo.bind("<<ComboboxSelected>>", self.get_selected_algo)
+        self.algorithm_combo.bind("<<ComboboxSelected>>", self.on_algorithm_selected)
+
+        # Set ttk theme to match the dark background
+        style = ttk.Style()
+        style.theme_use('clam')  # Use the 'clam' theme for modern look
+        style.configure("TCombobox", fieldbackground="#ecf0f1", background="#3498db")
+
+        # make default heurstic
+        self.selected_heuristic = tk.StringVar(value="Euclidean")
+        # Create two hidden radio buttons
+        self.radio1 = tk.Radiobutton(
+            search_frame, text="Euclidean", variable=self.selected_heuristic, value="Euclidean",
+            bg='#2980b9', fg='white', activebackground='#1abc9c', activeforeground='white',
+            selectcolor='#3498db'
+        )
+        self.radio2 = tk.Radiobutton(
+            search_frame, text="Manhattan", variable=self.selected_heuristic, value="Manhattan",
+            bg='#2980b9', fg='white', activebackground='#1abc9c', activeforeground='white',
+            selectcolor='#3498db'
+        )
+
+        
+        # hidden limit input for IDFS
+        self.limit_input_label = tk.Label(search_frame, text="Enter limit", bg='#34495e', fg='white', font=('Arial', 10, 'bold'))
+        self.limit_combo = ttk.Combobox(search_frame, values=list(range(101)), font=('Arial', 12), state='readonly')
+        # Set default value
+        self.limit_combo.current(0)
 
         # Set ttk theme to match the dark background
         style = ttk.Style()
@@ -105,17 +131,17 @@ class Puzzle:
         style.configure("TCombobox", fieldbackground="#ecf0f1", background="#3498db")
 
         # solve button
-        solve_btn = tk.Button(
+        self.solve_btn = tk.Button(
             search_frame, text="Solve", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.solve_puzzle
         )
-        solve_btn.pack(pady=2)
+        self.solve_btn.pack(pady=2)
         # ======================== Puzzle output Frame ========================
         output_frame = tk.Frame(self.root, bg='#34495e')
         output_frame.grid(row=3, column=0, pady=10, sticky='ew')
 
         # Create a Text widget for output display
-        self.output_text = tk.Text(output_frame, height=5, width=50, font=('Arial', 12), bg='#ecf0f1', fg='#2c3e50')
+        self.output_text = tk.Text(output_frame, height=5, width=50, font=('Arial', 12), bg='#ecf0f1', fg='#2c3e50', state='disabled')
         self.output_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Create a Scrollbar for the Text widget
@@ -125,12 +151,23 @@ class Puzzle:
         # Configure the Text widget to use the scrollbar
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
-
-    # get selected algorithm from combobox
-    def get_selected_algo(self, event):
-        selected_value = self.algorithm_combo.get()
-        print(f"Selected Algorithm: {selected_value}")
+    # repack solve button
+    def repack_solve_button(self):
+        self.solve_btn.pack_forget()
+        self.solve_btn.pack(pady=2)
     
+    def on_algorithm_selected(self, event):
+        selected_value = self.algorithm_combo.get()
+        if selected_value == 'A*':
+            self.show_radio_buttons()
+        else:
+            self.hide_radio_buttons()
+
+        if selected_value == 'IDFS':
+            self.show_limt_input_field()
+        else:
+            self.hide_limt_input_field()
+
     # randomize board with update
     def randomize_board(self):
         random.shuffle(self.tiles)
@@ -147,6 +184,24 @@ class Puzzle:
         self.custom_input_label.pack_forget()
         self.input_entry.pack_forget()
         self.submit_btn.pack_forget()
+
+    def show_radio_buttons(self):
+        self.radio1.pack(pady=2)
+        self.radio2.pack(pady=2)
+        self.repack_solve_button()
+
+    def hide_radio_buttons(self):
+        self.radio1.pack_forget()
+        self.radio2.pack_forget()
+
+    def show_limt_input_field(self):
+        self.limit_input_label.pack(pady=2)
+        self.limit_combo.pack(fill='x', padx=10, pady=5)
+        self.repack_solve_button()
+
+    def hide_limt_input_field(self):
+        self.limit_input_label.pack_forget()
+        self.limit_combo.pack_forget()
 
     def is_valid_custom_input(self, board):
         if len(board) != 9:
@@ -193,16 +248,17 @@ class Puzzle:
         return state
 
     def solve_puzzle(self):
+        # enable editing
+        self.output_text['state'] = 'normal'
         # delete previous output if any
         self.output_text.delete(1.0, tk.END)
-
         # get initial state
         board = self.get_state()
-        print(board)
         board = int(board)
         algo = self.algorithm_combo.get()
 
-        technique = Factory.get_technique(algo, intial_state=board)
+        # get technique to solve puzzle
+        technique = Factory.get_technique(algo, intial_state=board, limit=int(self.limit_combo.get()), heuristic=self.selected_heuristic.get())
         
         # perform algorithm
         start = time.time()
@@ -220,6 +276,8 @@ class Puzzle:
 
         # insert new output
         self.output_text.insert(tk.END, output_str)
+        # disable editing
+        self.output_text['state'] = 'disable'
 
 root = tk.Tk()
 Puzzle(root)

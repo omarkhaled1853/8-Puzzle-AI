@@ -13,6 +13,6 @@ class Factory:
             return DFS(intial_state)
         elif algorithm_name == 'IDFS':
             return DFS(intial_state, limit)
-        elif algorithm_name == 'A_star':
+        elif algorithm_name == 'A*':
             return A_STAR(intial_state, heuristic)
         else: None
