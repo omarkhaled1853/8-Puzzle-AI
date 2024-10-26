@@ -1,6 +1,7 @@
 from BuzzleSolver.search import *
 from BuzzleSolver.BFS.bfs import *
 from BuzzleSolver.DFS.dfs import *
+from BuzzleSolver.A_star.a_star import *
 
 # factory class to returun specific search alogrithm
 class Factory:
@@ -12,6 +13,6 @@ class Factory:
             return DFS(intial_state)
         elif algorithm_name == 'IDFS':
             return DFS(intial_state, limit)
-        # elif algorithm_name == 'A_star':
-        #     return A_Star(intial_state, heuristic)
+        elif algorithm_name == 'A_star':
+            return A_STAR(intial_state, heuristic)
         else: None

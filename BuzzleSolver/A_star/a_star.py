@@ -1,10 +1,10 @@
 import heapq
+from BuzzleSolver.search import *
 
 
-class A_Star:
-
-    def __init__(self, board: int, heuristic) -> None:  # initial state and heuristic function
-        self.board = board
+class A_STAR(Search):
+    def __init__(self, intial_state, heuristic) -> None:
+        super().__init__(intial_state)
         self.heuristic = heuristic
 
     def goal_test(self, board: int) -> bool:
@@ -63,10 +63,10 @@ class A_Star:
 
     def solve(self) -> dict:
         frontier = []
-        h_root = self.heuristic(self.board)
-        heapq.heappush(frontier, (h_root + 0, 0, self.board))  # insert (h+g, g, initial_state)
+        h_root = self.heuristic(self._intial_state)
+        heapq.heappush(frontier, (h_root + 0, 0, self._intial_state))  # insert (h+g, g, initial_state)
 
-        parent = {self.board: -1}
+        parent = {self._intial_state: -1}
         explored = set()
         max_depth = 0
 
