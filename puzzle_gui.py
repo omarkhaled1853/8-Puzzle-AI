@@ -10,6 +10,10 @@ class Puzzle:
         # Configure the main layout with a background color
         self.root.config(padx=10, pady=10, bg='#2c3e50')
 
+        # Configure the main layout to expand vertically and horizontaly
+        self.root.grid_rowconfigure(0, weight=1)  # Allow row 0 to expand
+        self.root.grid_columnconfigure(0, weight=1)  # Allow column 0 to expand
+
         # ======================== Puzzle Board Frame ========================
         board_frame = tk.Frame(self.root, bg='#34495e', padx=5, pady=5)
         board_frame.grid(row=0, column=0, padx=10, pady=(0, 10))
@@ -63,6 +67,7 @@ class Puzzle:
         custom_input_btn.pack(pady=2)
 
         # hidden input field for custom board
+        self.custom_input_label = tk.Label(board_control_frame, text="Enter game state", bg='#34495e', fg='white', font=('Arial', 10, 'bold'))
         self.input_entry = tk.Entry(board_control_frame, font=('Arial', 14))
         self.submit_btn = tk.Button(board_control_frame, text="Submit", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.customize_board
@@ -95,6 +100,28 @@ class Puzzle:
         style = ttk.Style()
         style.theme_use('clam')  # Use the 'clam' theme for modern look
         style.configure("TCombobox", fieldbackground="#ecf0f1", background="#3498db")
+
+        # solve button
+        solve_btn = tk.Button(
+            search_frame, text="Solve", font=('Arial', 12), bg='#2980b9', fg='white',
+            activebackground='#1abc9c', command=self.get_output
+        )
+        solve_btn.pack(pady=2)
+        # ======================== Puzzle output Frame ========================
+        output_frame = tk.Frame(self.root, bg='#34495e')
+        output_frame.grid(row=3, column=0, pady=10, sticky='ew')
+
+        # Create a Text widget for output display
+        self.output_text = tk.Text(output_frame, height=5, width=50, font=('Arial', 12), bg='#ecf0f1', fg='#2c3e50')
+        self.output_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Create a Scrollbar for the Text widget
+        self.scrollbar = tk.Scrollbar(output_frame, command=self.output_text.yview)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Configure the Text widget to use the scrollbar
+        self.output_text.config(yscrollcommand=self.scrollbar.set)
+
     
     # randomize board with update
     def randomize_board(self):
@@ -104,10 +131,12 @@ class Puzzle:
             self.tiles[i].grid(row=i // 3, column=i % 3, padx=2, pady=2)
 
     def show_custom_input_field(self):
+        self.custom_input_label.pack(pady=2)
         self.input_entry.pack(pady=2)
         self.submit_btn.pack(pady=2)
 
     def hide_custom_input_field(self):
+        self.custom_input_label.pack_forget()
         self.input_entry.pack_forget()
         self.submit_btn.pack_forget()
 
@@ -126,7 +155,6 @@ class Puzzle:
 
     # customize board with update
     def customize_board(self):
-        # board = input('Enter game state, from top-left to right-bottom, 9 characters, e.g. "012345678": ')
         board = self.input_entry.get()
         # check custom input validation
         if self.is_valid_custom_input(board):
@@ -146,7 +174,28 @@ class Puzzle:
 
             # hide the input field and submit button after processing
             self.hide_custom_input_field()
+    
+    def get_output(self):
+        self.output_text.delete(1.0, tk.END)
 
+        output = {
+            'path_to_goal': ['up', 'left', 'left'],
+            'cost_of_path': 3,
+            'nodes_expanded': 5,
+            'search_depth': 3,
+            'goal_steps': [120345678, 102345678, 12345678]
+        }
+
+        output_str = (
+            f"Time: {0.0:.2f} ms\n"
+            f"Path to Goal: {output['path_to_goal']}\n"
+            f"Cost of Path: {output['cost_of_path']}\n"
+            f"Nodes Expanded: {output['nodes_expanded']}\n"
+            f"Search Depth: {output['search_depth']}\n"
+            f"Path: {output['goal_steps']}\n"
+        )
+
+        self.output_text.insert(tk.END, output_str)
 
 root = tk.Tk()
 Puzzle(root)
