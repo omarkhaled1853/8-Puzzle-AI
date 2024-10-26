@@ -1,16 +1,16 @@
 from BuzzleSolver.BFS.bfs import *
 from BuzzleSolver.DFS.dfs import *
-from BuzzleSolver.factory import *
+from BuzzleSolver.algorithm_factory import *
 from BuzzleSolver.A_star.a_star import *
-from BuzzleSolver.A_star.heuristic import *
+from BuzzleSolver.A_star.heuristic_factory import *
 import time
 
 def main():
     # example
     board = 125340678
 
-    heu = Heuristics()
-    a_star = Factory.get_technique('A_star', intial_state=board, heuristic=heu.Euclidean_Distance)
+    heu = Heuristic_Factory.get_heuristic('Manhattan')
+    a_star = Algorithm_Factory.get_technique('A*', intial_state=board, heuristic=heu)
 
     # perform BFS algorithm
     start = time.time()

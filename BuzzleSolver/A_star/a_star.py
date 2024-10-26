@@ -2,7 +2,7 @@ import heapq
 from BuzzleSolver.search import *
 
 
-class A_STAR(Search):
+class A_star(Search):
     def __init__(self, intial_state, heuristic) -> None:
         super().__init__(intial_state)
         self.heuristic = heuristic
