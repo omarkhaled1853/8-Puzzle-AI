@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import random
+import time
+from BuzzleSolver.factory import *
 
 class Puzzle:
     def __init__(self, root):
@@ -105,7 +107,7 @@ class Puzzle:
         # solve button
         solve_btn = tk.Button(
             search_frame, text="Solve", font=('Arial', 12), bg='#2980b9', fg='white',
-            activebackground='#1abc9c', command=self.get_output
+            activebackground='#1abc9c', command=self.solve_puzzle
         )
         solve_btn.pack(pady=2)
         # ======================== Puzzle output Frame ========================
@@ -123,10 +125,11 @@ class Puzzle:
         # Configure the Text widget to use the scrollbar
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
+
     # get selected algorithm from combobox
     def get_selected_algo(self, event):
         selected_value = self.algorithm_combo.get()
-        print(f"Selected Algorithm: {selected_value}") 
+        print(f"Selected Algorithm: {selected_value}")
     
     # randomize board with update
     def randomize_board(self):
@@ -180,19 +183,34 @@ class Puzzle:
             # hide the input field and submit button after processing
             self.hide_custom_input_field()
     
-    def get_output(self):
+    def get_state(self) -> str:
+        state = ''
+        for tile in self.tiles:
+            if tile['text'] == '':
+                state += '0'
+            else:
+                state += str(tile['text'])
+        return state
+
+    def solve_puzzle(self):
+        # delete previous output if any
         self.output_text.delete(1.0, tk.END)
 
-        output = {
-            'path_to_goal': ['up', 'left', 'left'],
-            'cost_of_path': 3,
-            'nodes_expanded': 5,
-            'search_depth': 3,
-            'goal_steps': [120345678, 102345678, 12345678]
-        }
+        # get initial state
+        board = self.get_state()
+        print(board)
+        board = int(board)
+        algo = self.algorithm_combo.get()
+
+        technique = Factory.get_technique(algo, intial_state=board)
+        
+        # perform algorithm
+        start = time.time()
+        output = technique.solve()
+        end = time.time()
 
         output_str = (
-            f"Time: {0.0:.2f} ms\n"
+            f"Time: {(end - start) * 1000:.2f} ms\n"
             f"Path to Goal: {output['path_to_goal']}\n"
             f"Cost of Path: {output['cost_of_path']}\n"
             f"Nodes Expanded: {output['nodes_expanded']}\n"
@@ -200,6 +218,7 @@ class Puzzle:
             f"Path: {output['goal_steps']}\n"
         )
 
+        # insert new output
         self.output_text.insert(tk.END, output_str)
 
 root = tk.Tk()
