@@ -56,6 +56,11 @@ class Puzzle:
         self.next_btn = tk.Button(container_frame, text="Next", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.get_next_step
         )
+
+        # hidden previous button
+        self.previous_btn = tk.Button(container_frame, text="Previous", font=('Arial', 12), bg='#2980b9', fg='white',
+            activebackground='#1abc9c', command=self.get_previous_step
+        )
         
         # ======================== Puzzle Board Controler Frame ========================
         board_control_frame = tk.Frame(self.root, bg='#34495e')
@@ -165,14 +170,20 @@ class Puzzle:
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
     def get_next_step(self):
-        if self.current_step_index < len(self.goal_steps):
-            board = str(self.goal_steps[self.current_step_index])
+        if self.current_step_index + 1 < len(self.goal_steps):
             self.current_step_index += 1
+            board = str(self.goal_steps[self.current_step_index])
             board = '0' + board if len(board) != 9 else board
             self.update_board(board)
-        
-        if self.current_step_index == len(self.goal_steps):
-            self.hide_next_button()
+            self.update_buttons()
+    
+    def get_previous_step(self):
+        if self.current_step_index - 1 >= 0:
+            self.current_step_index -= 1
+            board = str(self.goal_steps[self.current_step_index])
+            board = '0' + board if len(board) != 9 else board
+            self.update_board(board)
+            self.update_buttons()
 
     # repack solve button
     def repack_solve_button(self):
@@ -197,40 +208,6 @@ class Puzzle:
         # update board
         for i in range(9):
             self.tiles[i].grid(row=i // 3, column=i % 3, padx=2, pady=2)
-
-    def show_custom_input_field(self):
-        self.custom_input_label.pack(pady=2)
-        self.input_entry.pack(pady=2)
-        self.submit_btn.pack(pady=2)
-
-    def hide_custom_input_field(self):
-        self.custom_input_label.pack_forget()
-        self.input_entry.pack_forget()
-        self.submit_btn.pack_forget()
-
-    def show_radio_buttons(self):
-        self.radio1.pack(pady=2)
-        self.radio2.pack(pady=2)
-        self.repack_solve_button()
-
-    def hide_radio_buttons(self):
-        self.radio1.pack_forget()
-        self.radio2.pack_forget()
-
-    def show_limt_input_field(self):
-        self.limit_input_label.pack(pady=2)
-        self.limit_combo.pack(fill='x', padx=10, pady=5)
-        self.repack_solve_button()
-
-    def hide_limt_input_field(self):
-        self.limit_input_label.pack_forget()
-        self.limit_combo.pack_forget()
-    
-    def show_next_button(self):
-        self.next_btn.pack(anchor='se')
-    
-    def hide_next_button(self):
-        self.next_btn.pack_forget()
 
     def is_valid_custom_input(self, board):
         if len(board) != 9:
@@ -279,6 +256,19 @@ class Puzzle:
                 state += str(tile['text'])
         return state
 
+
+    def update_buttons(self):
+        # update next button
+        if self.current_step_index + 1 >= len(self.goal_steps):
+            self.hide_next_button()
+        else:
+            self.show_next_button()
+        
+        if self.current_step_index - 1 < 0:
+            self.hide_previous_button()
+        else:
+            self.show_previous_button()
+
     def solve_puzzle(self):
         # enable editing
         self.output_text['state'] = 'normal'
@@ -296,10 +286,6 @@ class Puzzle:
         start = time.time()
         output = technique.solve()
         end = time.time()
-
-        # show next button
-        if len(output['goal_steps']):
-           self.show_next_button()
  
         output_str = (
             f"Time: {(end - start) * 1000:.2f} ms\n"
@@ -310,13 +296,57 @@ class Puzzle:
             f"Path: {output['goal_steps']}\n"
         )
 
+        output['goal_steps'].insert(0, board)
         self.goal_steps = output['goal_steps']
         self.current_step_index = 0
+
+        # update buttons if any
+        self.update_buttons()
 
         # insert new output
         self.output_text.insert(tk.END, output_str)
         # disable editing
         self.output_text['state'] = 'disable'
+
+    def show_custom_input_field(self):
+        self.custom_input_label.pack(pady=2)
+        self.input_entry.pack(pady=2)
+        self.submit_btn.pack(pady=2)
+
+    def hide_custom_input_field(self):
+        self.custom_input_label.pack_forget()
+        self.input_entry.pack_forget()
+        self.submit_btn.pack_forget()
+
+    def show_radio_buttons(self):
+        self.radio1.pack(pady=2)
+        self.radio2.pack(pady=2)
+        self.repack_solve_button()
+
+    def hide_radio_buttons(self):
+        self.radio1.pack_forget()
+        self.radio2.pack_forget()
+
+    def show_limt_input_field(self):
+        self.limit_input_label.pack(pady=2)
+        self.limit_combo.pack(fill='x', padx=10, pady=5)
+        self.repack_solve_button()
+
+    def hide_limt_input_field(self):
+        self.limit_input_label.pack_forget()
+        self.limit_combo.pack_forget()
+    
+    def show_next_button(self):
+        self.next_btn.pack(side=tk.RIGHT)
+    
+    def hide_next_button(self):
+        self.next_btn.pack_forget()
+    
+    def show_previous_button(self):
+        self.previous_btn.pack(side=tk.LEFT)
+    
+    def hide_previous_button(self):
+        self.previous_btn.pack_forget()
 
 root = tk.Tk()
 Puzzle(root)
