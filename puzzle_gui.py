@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import random
 import time
-from BuzzleSolver.factory import *
+from BuzzleSolver.algorithm_factory import *
 
 class Puzzle:
     def __init__(self, root):
@@ -17,8 +17,11 @@ class Puzzle:
         self.root.grid_columnconfigure(0, weight=1)  # Allow column 0 to expand
 
         # ======================== Puzzle Board Frame ========================
-        board_frame = tk.Frame(self.root, bg='#34495e', padx=5, pady=5)
-        board_frame.grid(row=0, column=0, padx=10, pady=(0, 10))
+        container_frame = tk.Frame(self.root, bg='#34495e', padx=5, pady=5)
+        container_frame.grid(row=0, column=0, padx=10, pady=(0, 10))
+
+        board_frame = tk.Frame(container_frame, bg='#2c3e50', padx=5, pady=5)
+        board_frame.pack(pady=(0, 10))
 
         # Creat default board values
         self.tiles = []
@@ -43,7 +46,17 @@ class Puzzle:
             # set location of each button
             btn.grid(row=i // 3, column=i % 3, padx=2, pady=2)
             self.tiles.append(btn)
+        
+        # goal steps
+        self.goal_steps = []
+        # current step
+        self.current_step_index = 0
 
+        # hidden next button
+        self.next_btn = tk.Button(container_frame, text="Next", font=('Arial', 12), bg='#2980b9', fg='white',
+            activebackground='#1abc9c', command=self.get_next_step
+        )
+        
         # ======================== Puzzle Board Controler Frame ========================
         board_control_frame = tk.Frame(self.root, bg='#34495e')
         board_control_frame.grid(row=1, column=0, pady=10, sticky='ew')
@@ -151,6 +164,16 @@ class Puzzle:
         # Configure the Text widget to use the scrollbar
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
+    def get_next_step(self):
+        if self.current_step_index < len(self.goal_steps):
+            board = str(self.goal_steps[self.current_step_index])
+            self.current_step_index += 1
+            board = '0' + board if len(board) != 9 else board
+            self.update_board(board)
+        
+        if self.current_step_index == len(self.goal_steps):
+            self.hide_next_button()
+
     # repack solve button
     def repack_solve_button(self):
         self.solve_btn.pack_forget()
@@ -202,6 +225,12 @@ class Puzzle:
     def hide_limt_input_field(self):
         self.limit_input_label.pack_forget()
         self.limit_combo.pack_forget()
+    
+    def show_next_button(self):
+        self.next_btn.pack(anchor='se')
+    
+    def hide_next_button(self):
+        self.next_btn.pack_forget()
 
     def is_valid_custom_input(self, board):
         if len(board) != 9:
@@ -222,7 +251,12 @@ class Puzzle:
         # check custom input validation
         if self.is_valid_custom_input(board):
             # update board
-            for i in range(9):
+            self.update_board(board)
+            # hide the input field and submit button after processing
+            self.hide_custom_input_field()
+
+    def update_board(self, board):
+        for i in range(9):
                 # change tile text
                 text = board[i] if board[i] != '0' else ''
                 self.tiles[i]['text'] = text
@@ -235,8 +269,6 @@ class Puzzle:
                 fg_color = '#2c3e50' if board[i] != '0' else 'white'
                 self.tiles[i]['fg'] = fg_color
 
-            # hide the input field and submit button after processing
-            self.hide_custom_input_field()
     
     def get_state(self) -> str:
         state = ''
@@ -258,21 +290,28 @@ class Puzzle:
         algo = self.algorithm_combo.get()
 
         # get technique to solve puzzle
-        technique = Factory.get_technique(algo, intial_state=board, limit=int(self.limit_combo.get()), heuristic=self.selected_heuristic.get())
+        technique = Algorithm_Factory.get_technique(algo, intial_state=board, limit=int(self.limit_combo.get()), heuristic=self.selected_heuristic.get())
         
         # perform algorithm
         start = time.time()
         output = technique.solve()
         end = time.time()
 
+        # show next button
+        if len(output['goal_steps']):
+           self.show_next_button()
+ 
         output_str = (
             f"Time: {(end - start) * 1000:.2f} ms\n"
-            f"Path to Goal: {output['path_to_goal']}\n"
+            f"Path to Goal: { [s.upper() for s in output['path_to_goal']]}\n"
             f"Cost of Path: {output['cost_of_path']}\n"
             f"Nodes Expanded: {output['nodes_expanded']}\n"
             f"Search Depth: {output['search_depth']}\n"
             f"Path: {output['goal_steps']}\n"
         )
+
+        self.goal_steps = output['goal_steps']
+        self.current_step_index = 0
 
         # insert new output
         self.output_text.insert(tk.END, output_str)

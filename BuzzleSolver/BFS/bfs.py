@@ -111,7 +111,7 @@ class BFS(Search):
                     'cost_of_path': len(path) - 1,
                     'nodes_expanded': len(expanded),
                     'search_depth': max_depth_search,
-                    'goal_steps': path
+                    'goal_steps': path[1:]
                 }
             
             # searching up, down, right, and left for the next movment of the empty tile

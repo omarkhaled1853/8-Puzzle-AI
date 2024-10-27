@@ -9,8 +9,7 @@ def main():
     # example
     board = 125340678
 
-    heu = Heuristic_Factory.get_heuristic('Manhattan')
-    a_star = Algorithm_Factory.get_technique('A*', intial_state=board, heuristic=heu)
+    a_star = Algorithm_Factory.get_technique('A*', intial_state=board, heuristic='Euclidean')
 
     # perform BFS algorithm
     start = time.time()
