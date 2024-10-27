@@ -9,18 +9,33 @@ class Puzzle:
         self.root = root
         self.root.title("8-Puzzle Game")
 
-        # Configure the main layout with a background color
-        self.root.config(padx=10, pady=10, bg='#2c3e50')
+        # Create a container frame to hold all frames
+        self.container_frame = tk.Frame(self.root, bg='#2c3e50')
+        self.container_frame.config(padx=10, pady=10, bg='#2c3e50')
+        self.container_frame.pack(fill=tk.BOTH, expand=True)
 
-        # Configure the main layout to expand vertically and horizontaly
-        self.root.grid_rowconfigure(0, weight=1)  # Allow row 0 to expand
-        self.root.grid_columnconfigure(0, weight=1)  # Allow column 0 to expand
+        self.setup_frame = tk.Frame(self.container_frame, bg='#2c3e50')
+        self.setup_frame.pack(fill=tk.BOTH, expand=True)
 
+        
+        self.setup_frame.pack(fill=tk.BOTH)
+        self.setup_frame.grid_rowconfigure(0, weight=1)
+        self.setup_frame.grid_columnconfigure(0, weight=1)
+        
+        # Setup the puzzle components
+        self.setup_puzzle_board(self.setup_frame)
+        self.setup_controls(self.setup_frame)
+        self.setup_search(self.setup_frame)
+        self.setup_output(self.setup_frame)
+
+        # self.scrollbar_setup.config(command=self.setup_frame.yview)
+    # ======================== Setup functions ========================
+    def setup_puzzle_board(self, parent):
         # ======================== Puzzle Board Frame ========================
-        container_frame = tk.Frame(self.root, bg='#34495e', padx=5, pady=5)
-        container_frame.grid(row=0, column=0, padx=10, pady=(0, 10))
+        container_board = tk.Frame(parent, bg='#34495e', padx=5, pady=5)
+        container_board.grid(row=0, column=0, padx=10, pady=(0, 10))
 
-        board_frame = tk.Frame(container_frame, bg='#2c3e50', padx=5, pady=5)
+        board_frame = tk.Frame(container_board, bg='#2c3e50', padx=5, pady=5)
         board_frame.pack(pady=(0, 10))
 
         # Creat default board values
@@ -36,8 +51,8 @@ class Puzzle:
             btn = tk.Button(
                 board_frame,
                 text=text,
-                width=5,
-                height=2,
+                width=3,
+                height=1,
                 font=('Arial', 24, 'bold'),
                 bg=color,
                 fg='#2c3e50' if i != 0 else 'white',
@@ -53,17 +68,18 @@ class Puzzle:
         self.current_step_index = 0
 
         # hidden next button
-        self.next_btn = tk.Button(container_frame, text="Next", font=('Arial', 12), bg='#2980b9', fg='white',
+        self.next_btn = tk.Button(container_board, text="Next", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.get_next_step
         )
 
         # hidden previous button
-        self.previous_btn = tk.Button(container_frame, text="Previous", font=('Arial', 12), bg='#2980b9', fg='white',
+        self.previous_btn = tk.Button(container_board, text="Previous", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.get_previous_step
         )
-        
+
+    def setup_controls(self, parent):
         # ======================== Puzzle Board Controler Frame ========================
-        board_control_frame = tk.Frame(self.root, bg='#34495e')
+        board_control_frame = tk.Frame(parent, bg='#34495e')
         board_control_frame.grid(row=1, column=0, pady=10, sticky='ew')
 
         # set label for board control frame
@@ -92,8 +108,10 @@ class Puzzle:
         self.submit_btn = tk.Button(board_control_frame, text="Submit", font=('Arial', 12), bg='#2980b9', fg='white',
             activebackground='#1abc9c', command=self.customize_board
         )
+
+    def setup_search(self, parent):
         # ======================== Puzzle Search Frame ========================
-        search_frame = tk.Frame(self.root, bg='#34495e')
+        search_frame = tk.Frame(parent, bg='#34495e')
         search_frame.grid(row=2, column=0, pady=10, sticky='ew')
 
         # set label for srearch frame
@@ -154,8 +172,11 @@ class Puzzle:
             activebackground='#1abc9c', command=self.solve_puzzle
         )
         self.solve_btn.pack(pady=2)
+    
+
+    def setup_output(self, parent):
         # ======================== Puzzle output Frame ========================
-        output_frame = tk.Frame(self.root, bg='#34495e')
+        output_frame = tk.Frame(parent, bg='#34495e')
         output_frame.grid(row=3, column=0, pady=10, sticky='ew')
 
         # Create a Text widget for output display
@@ -169,6 +190,49 @@ class Puzzle:
         # Configure the Text widget to use the scrollbar
         self.output_text.config(yscrollcommand=self.scrollbar.set)
 
+    # ======================== Show hiden functions ========================
+    def show_custom_input_field(self):
+        self.custom_input_label.pack(pady=2)
+        self.input_entry.pack(pady=2)
+        self.submit_btn.pack(pady=2)
+
+    def hide_custom_input_field(self):
+        self.custom_input_label.pack_forget()
+        self.input_entry.pack_forget()
+        self.submit_btn.pack_forget()
+
+    def show_radio_buttons(self):
+        self.radio1.pack(pady=2)
+        self.radio2.pack(pady=2)
+        self.repack_solve_button()
+
+    def hide_radio_buttons(self):
+        self.radio1.pack_forget()
+        self.radio2.pack_forget()
+
+    def show_limt_input_field(self):
+        self.limit_input_label.pack(pady=2)
+        self.limit_combo.pack(fill='x', padx=10, pady=5)
+        self.repack_solve_button()
+
+    def hide_limt_input_field(self):
+        self.limit_input_label.pack_forget()
+        self.limit_combo.pack_forget()
+    
+    def show_next_button(self):
+        self.next_btn.pack(side=tk.RIGHT)
+    
+    def hide_next_button(self):
+        self.next_btn.pack_forget()
+    
+    def show_previous_button(self):
+        self.previous_btn.pack(side=tk.LEFT)
+    
+    def hide_previous_button(self):
+        self.previous_btn.pack_forget()
+
+
+    # ======================== Helper functions ========================
     def get_next_step(self):
         if self.current_step_index + 1 < len(self.goal_steps):
             self.current_step_index += 1
@@ -293,7 +357,7 @@ class Puzzle:
             f"Cost of Path: {output['cost_of_path']}\n"
             f"Nodes Expanded: {output['nodes_expanded']}\n"
             f"Search Depth: {output['search_depth']}\n"
-            f"Path: {output['goal_steps']}\n"
+            # f"Path: {output['goal_steps']}\n"
         )
 
         output['goal_steps'].insert(0, board)
@@ -307,46 +371,6 @@ class Puzzle:
         self.output_text.insert(tk.END, output_str)
         # disable editing
         self.output_text['state'] = 'disable'
-
-    def show_custom_input_field(self):
-        self.custom_input_label.pack(pady=2)
-        self.input_entry.pack(pady=2)
-        self.submit_btn.pack(pady=2)
-
-    def hide_custom_input_field(self):
-        self.custom_input_label.pack_forget()
-        self.input_entry.pack_forget()
-        self.submit_btn.pack_forget()
-
-    def show_radio_buttons(self):
-        self.radio1.pack(pady=2)
-        self.radio2.pack(pady=2)
-        self.repack_solve_button()
-
-    def hide_radio_buttons(self):
-        self.radio1.pack_forget()
-        self.radio2.pack_forget()
-
-    def show_limt_input_field(self):
-        self.limit_input_label.pack(pady=2)
-        self.limit_combo.pack(fill='x', padx=10, pady=5)
-        self.repack_solve_button()
-
-    def hide_limt_input_field(self):
-        self.limit_input_label.pack_forget()
-        self.limit_combo.pack_forget()
-    
-    def show_next_button(self):
-        self.next_btn.pack(side=tk.RIGHT)
-    
-    def hide_next_button(self):
-        self.next_btn.pack_forget()
-    
-    def show_previous_button(self):
-        self.previous_btn.pack(side=tk.LEFT)
-    
-    def hide_previous_button(self):
-        self.previous_btn.pack_forget()
 
 root = tk.Tk()
 Puzzle(root)
