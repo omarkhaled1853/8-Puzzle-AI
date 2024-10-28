@@ -291,6 +291,12 @@ class Puzzle:
         else:
             self.solve_puzzle(board)
 
+    def check_reach_goal(self, output):
+        if output is None:
+            messagebox.showerror(title="Goal Error", message="Cann't reach to goal! Please enter another board")
+            return False
+        return True
+
 
     # customize board with update
     def customize_board(self):
@@ -354,7 +360,9 @@ class Puzzle:
         start = time.time()
         output = technique.solve()
         end = time.time()
- 
+        
+        if not self.check_reach_goal(output): return
+
         output_str = (
             f"Time: {(end - start) * 1000:.2f} ms\n"
             f"Path to Goal: { [s.upper() for s in output['path_to_goal']]}\n"
@@ -362,6 +370,12 @@ class Puzzle:
             f"Nodes Expanded: {output['nodes_expanded']}\n"
             f"Search Depth: {output['search_depth']}\n"
         )
+
+
+        print(output['cost_of_path'])
+        print(output['nodes_expanded'])
+        print(output['search_depth'])
+
 
         output['goal_steps'].insert(0, board)
         self.goal_steps = output['goal_steps']
