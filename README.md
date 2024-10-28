@@ -2,6 +2,10 @@
 
 This is an interactive **8-Puzzle game** with a graphical user interface (GUI). The solver supports multiple search algorithms like **BFS, DFS, IDFS, A\*** with configurable heuristics. Users can input their custom puzzle or generate a random one and visualize the solution step-by-step using **Next** and **Previous** buttons.
 
+## Demo Video
+
+[Watch the 8-Puzzle Game Demo](https://github.com/user-attachments/assets/f1ca22c6-df10-4f8b-aa17-c289b0e9c43d)
+
 ## Features
 
 - **Algorithms supported**:
