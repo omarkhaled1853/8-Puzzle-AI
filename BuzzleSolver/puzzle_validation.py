@@ -14,10 +14,3 @@ def isSolvable(puzzle) :
 
 	# return true if inversion count is even.
 	return (inv_count % 2 == 0)
-
-# example
-puzzle = '812043765'
-if(isSolvable(puzzle)) :
-	print("Solvable")
-else :
-	print("Not Solvable")

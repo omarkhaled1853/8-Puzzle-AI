@@ -8,7 +8,7 @@ import time
 def main():
     # example
     board = 125340678
-
+    812043765
     a_star = Algorithm_Factory.get_technique('A*', intial_state=board, heuristic='Euclidean')
 
     # perform BFS algorithm

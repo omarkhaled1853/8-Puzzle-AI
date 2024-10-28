@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import random
 import time
 from BuzzleSolver.algorithm_factory import *
+from BuzzleSolver.puzzle_validation import *
 
 class Puzzle:
     def __init__(self, root):
@@ -13,20 +14,16 @@ class Puzzle:
         self.container_frame = tk.Frame(self.root, bg='#2c3e50')
         self.container_frame.config(padx=10, pady=10, bg='#2c3e50')
         self.container_frame.pack(fill=tk.BOTH, expand=True)
-
-        self.setup_frame = tk.Frame(self.container_frame, bg='#2c3e50')
-        self.setup_frame.pack(fill=tk.BOTH, expand=True)
-
         
-        self.setup_frame.pack(fill=tk.BOTH)
-        self.setup_frame.grid_rowconfigure(0, weight=1)
-        self.setup_frame.grid_columnconfigure(0, weight=1)
+        self.container_frame.grid_rowconfigure(0, weight=1)
+        self.container_frame.grid_columnconfigure(0, weight=1)
+
         
         # Setup the puzzle components
-        self.setup_puzzle_board(self.setup_frame)
-        self.setup_controls(self.setup_frame)
-        self.setup_search(self.setup_frame)
-        self.setup_output(self.setup_frame)
+        self.setup_puzzle_board(self.container_frame)
+        self.setup_controls(self.container_frame)
+        self.setup_search(self.container_frame)
+        self.setup_output(self.container_frame)
 
         # self.scrollbar_setup.config(command=self.setup_frame.yview)
     # ======================== Setup functions ========================
@@ -169,7 +166,7 @@ class Puzzle:
         # solve button
         self.solve_btn = tk.Button(
             search_frame, text="Solve", font=('Arial', 12), bg='#2980b9', fg='white',
-            activebackground='#1abc9c', command=self.solve_puzzle
+            activebackground='#1abc9c', command=self.check_solvable_puzzle
         )
         self.solve_btn.pack(pady=2)
     
@@ -285,6 +282,15 @@ class Puzzle:
             return False
         
         return True
+    
+    def check_solvable_puzzle(self):
+        # get initial state
+        board = self.get_state()
+        if(not isSolvable(board)):
+            messagebox.showerror(title="Solve Error", message="Non solvable puzzle! Please enter another board")
+        else:
+            self.solve_puzzle(board)
+
 
     # customize board with update
     def customize_board(self):
@@ -333,13 +339,11 @@ class Puzzle:
         else:
             self.show_previous_button()
 
-    def solve_puzzle(self):
+    def solve_puzzle(self, board):
         # enable editing
         self.output_text['state'] = 'normal'
         # delete previous output if any
         self.output_text.delete(1.0, tk.END)
-        # get initial state
-        board = self.get_state()
         board = int(board)
         algo = self.algorithm_combo.get()
 
