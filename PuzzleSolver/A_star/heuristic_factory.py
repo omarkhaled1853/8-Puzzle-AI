@@ -1,4 +1,4 @@
-from BuzzleSolver.A_star.heuristic import *
+from PuzzleSolver.A_star.heuristic import *
 
 class Heuristic_Factory:
     @staticmethod

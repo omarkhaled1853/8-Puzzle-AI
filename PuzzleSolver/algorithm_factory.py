@@ -1,8 +1,8 @@
-from BuzzleSolver.search import *
-from BuzzleSolver.BFS.bfs import *
-from BuzzleSolver.DFS.dfs import *
-from BuzzleSolver.A_star.a_star import *
-from BuzzleSolver.A_star.heuristic_factory import *
+from PuzzleSolver.search import *
+from PuzzleSolver.BFS.bfs import *
+from PuzzleSolver.DFS.dfs import *
+from PuzzleSolver.A_star.a_star import *
+from PuzzleSolver.A_star.heuristic_factory import *
 
 # factory class to returun specific search alogrithm
 class Algorithm_Factory:

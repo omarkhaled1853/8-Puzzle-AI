@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import random
 import time
-from BuzzleSolver.algorithm_factory import *
-from BuzzleSolver.puzzle_validation import *
+from PuzzleSolver.algorithm_factory import *
+from PuzzleSolver.puzzle_validation import *
 
 class Puzzle:
     def __init__(self, root):
@@ -361,7 +361,6 @@ class Puzzle:
             f"Cost of Path: {output['cost_of_path']}\n"
             f"Nodes Expanded: {output['nodes_expanded']}\n"
             f"Search Depth: {output['search_depth']}\n"
-            # f"Path: {output['goal_steps']}\n"
         )
 
         output['goal_steps'].insert(0, board)
@@ -375,7 +374,3 @@ class Puzzle:
         self.output_text.insert(tk.END, output_str)
         # disable editing
         self.output_text['state'] = 'disable'
-
-root = tk.Tk()
-Puzzle(root)
-root.mainloop()

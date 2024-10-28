@@ -1,5 +1,5 @@
 import heapq
-from BuzzleSolver.search import *
+from PuzzleSolver.search import *
 
 
 class A_star(Search):
