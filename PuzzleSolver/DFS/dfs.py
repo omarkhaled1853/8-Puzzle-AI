@@ -112,7 +112,12 @@ class DFS(Search):
             neighbors = self.getNeighbors(str(state))
 
             for neighbor in neighbors:
-                if neighbor not in self.explored and neighbor not in self.frontier:
+                if limit != float('inf'):
+                    if (neighbor not in self.depth) or (self.depth[state] + 1 < self.depth[neighbor]):
+                        self.frontier.append(neighbor)
+                        self.parent[neighbor] = state
+                        self.depth[neighbor] = self.depth[state] + 1
+                elif neighbor not in self.explored and neighbor not in self.frontier:
                     self.frontier.append(neighbor)
                     self.parent[neighbor] = state
                     self.depth[neighbor] = self.depth[state] + 1
